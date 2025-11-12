@@ -1,2 +1,37 @@
 # dsci-100-project_template
-Template project repository for DSCI-100
+Project-009-Team27-Individual-Report
+
+| Project-009-Team27-Individual-Report              |
+| :---------------- | :------: | -----------------: |
+| data/              players.csv, Sessions.csv      |
+| Project-009-Team27-Individual-Assignment.ipynb    |
+| Project-009-Team27-Individual-Report.html         |
+| README.md                                         |
+
+Planning Report — Busy Hour Probability
+
+Data description: We use two tables: players.csv (one row per player) and sessions.csv (one row per session). After parsing timestamps, we compute session durations and aggregate session starts into hourly counts. The dataset contains N_hour hourly observations. The mean of numeric columns in players.csv is summarized in a small table.
+
+Questions:
+Broad: Question 3 "We are interested in demand forecasting, namely, what time windows are most likely to have large number of simultaneous players. This is because we need to ensure that the number of licenses on hand is sufficiently large to accommodate all parallel players with high probability."
+Specific: Can hour-of-day and weekday patterns help identify “busy” hours?
+
+Exploratory analysis. A simple time-series plot shows clear daily cycles and weekly structure. Averaging by hour-of-day, activity peaks around peak hours, like, 18–22 and is lowest near off-hours. Averaging by weekday, days are typically busier than days. These patterns suggest that stable daily/weekly seasonality explains much of the variation.
+
+To respect daily cycles, I define a context-dependent threshold for each hour of day: Where busy if n(players) >= μ(hour) + 0.5*σ(hour), where μ(hour) and σ(hour) are the historical mean and standard deviation of counts at that hour (computed from the data). Using this rule, n_busy of N_hours (share_busy %) are labeled busy.
+
+Method and plan. This hour-baseline rule is simple, transparent, and grounded in the observed seasonality. For a modeling extension, I would fit a logistic regression (busy vs. not busy) using hour, weekday, and recent level (e.g., a short moving average) as features. I would use a time-based split (earlier hours for training, later hours for validation) and report probability quality (e.g., Brier score) and a confusion matrix at a reasonable threshold. A basic non-learning baseline is “always not busy.”
+
+Assumptions and limitations. Session starts per hour approximate concurrent usage; timestamps are consistently parsed. Special events or outages may break stationarity; missing logs may undercount activity. The 0.5*σ margin can be tuned.
+
+Data
+* players.csv — one row per player (demographics/experience/subscribe).
+* sessions.csv — one row per play session (start/end times, player key).
+
+How To Run:
+1. Ensure data/players.csv and data/sessions.csv exist
+2. Open the notebook in Jupyter (R kernel) and Run All.
+3. Export HTML: File → Download as → HTML (.html)
+
+R package:
+    install package library(tidyverse) library(repr) library(tidymodels) library(readr) library(dplyr) library(tidyr) library(ggplot2)
